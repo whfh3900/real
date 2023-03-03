@@ -11,8 +11,8 @@ API 양식에 맞게 request를 보내면 해당 거래가 특이거래 인지 �
 ## 사용자 거래유형 보기(GET)
 |URL|Request Body(Example)|STATE|Response Body(Example)|
 |------|---|---|---|
-|/api/{UID}||200|{"data": {"uid": "{UID}","c0": 19, ... "c12": 61,"note": ""},"state": 200,"error": null}|
-|/api/{UID}||404|{"data": null,"state": 404,"error": "No UID matches the given query."}|<br>
+|/api/{UID}||200|{"result": {"uid": "{UID}","c0": 19, ... "c12": 61,"note": ""},"state": 200,"error": null}|
+|/api/{UID}||404|{"result": null,"state": 404,"error": "No UID matches the given query."}|<br>
 
 
 ## 사용자 거래유형 생성 및 특이거래 알림(POST)
@@ -20,7 +20,7 @@ API 양식에 맞게 request를 보내면 해당 거래가 특이거래 인지 �
 |------|---|---|---|
 |/api/{UID}|{"bas_ym":202203,"age_dc":"60","gender":1,"bas_dt":20,"tran_md":"입금","ats_kdcd_tl":"펌뱅킹 입금이체","dps_trm_am":8,"text_1":"소득"}|201|{"result": false,"state": 201,"error": null}|
 |/api/{UID}|{"bas_ym":202203,"age_dc":"60","gender":1,"bas_dt":20,"tran_md":"입금","ats_kdcd_tl":"펌뱅킹 입금이체","dps_trm_am":8,"text_1":"소득"}|400|{"result": null,"error": {"bas_ym": ["A valid integer is required."]},"state": 400}|<br>
-|/api/{UID}|{"bas_ym":202203,"age_dc":"60","gender":1,"bas_dt":20,"tran_md":"입금","ats_kdcd_tl":"펌뱅킹 입금이체","dps_trm_am":8,"text_1":"소득"}|404|{"data": null,"state": 404,"error": "No UID matches the given query."},"state": 404}|<br>
+|/api/{UID}|{"bas_ym":202203,"age_dc":"60","gender":1,"bas_dt":20,"tran_md":"입금","ats_kdcd_tl":"펌뱅킹 입금이체","dps_trm_am":8,"text_1":"소득"}|404|{"result": null,"state": 404,"error": "No UID matches the given query."},"state": 404}|<br>
 
 
 ## 정보
