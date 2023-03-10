@@ -10,7 +10,7 @@ class Transaction(models.Model):
     dps_trn_am = models.IntegerField(blank=True, null=True)
     text_1 = models.TextField(blank=True, null=True)
     note = models.TextField(blank=True, null=True)
-    user_info_uid = models.ForeignKey('UserInfo', models.DO_NOTHING, db_column='user_info_uid')
+    user_info_uid = models.ForeignKey('UserInfo', models.DO_NOTHING, db_column='user_info_uid', related_name='transaction')
     result = models.CharField(max_length=45, blank=True, null=True)
 
     class Meta:

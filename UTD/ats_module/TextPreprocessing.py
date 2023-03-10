@@ -23,7 +23,7 @@ class Nickonlpy():
     #### 사람이름 치환
     def name_check(self, string):
         string_check(string)
-        names = [i[0] for i in self.post.pos(string) if i[1]=='Name']
+        names = [i[0] for i in self.post.pos(string) if i[1] == 'Name']
         if names:
             for name in names:
                 return string.replace(name, '')
@@ -47,7 +47,7 @@ def ascii_check(string):
         # 16진수인 ascii code
         hex_ascii_full = ord(full)
         # 16진수 형태의 string
-        hex_full = hex(hex_ascii_full)
+        # hex_full = hex(hex_ascii_full)
 
         # 전각일 경우 전각 기준인 값을 차감해 반각으로 변경
         if hex_ascii_full >= hex_ascii_diff:
@@ -64,20 +64,20 @@ def ascii_check(string):
 #### ()안에 법인명을 풀어서 치환
 def corporatebody(string):
     string_check(string)
-    cor_dict = {"(주)":" 주식회사 ",
-                "(사)":" 사단법인 ",
-                "(재단)":" 재단법인 ",
-                "(유)":" 유한회사 ",
-                "(재)":" 재단법인 ",
-                "(학)":" 학교법인 ",
-                "(합)":" 합자회사 ",
-                "(복)":" 복지재단 ",
-                "(의)":" 의료재단 ",
-                "(사복)":" 사회복지법인 ",
-                "(유한)":" 유한회사 ",}
+    cor_dict = {"(주)": " 주식회사 ",
+                "(사)": " 사단법인 ",
+                "(재단)": " 재단법인 ",
+                "(유)": " 유한회사 ",
+                "(재)": " 재단법인 ",
+                "(학)": " 학교법인 ",
+                "(합)": " 합자회사 ",
+                "(복)": " 복지재단 ",
+                "(의)": " 의료재단 ",
+                "(사복)": " 사회복지법인 ",
+                "(유한)": " 유한회사 ",}
 
-    for i,n in cor_dict.items():
-        string = string.replace(i,n)
+    for i, n in cor_dict.items():
+        string = string.replace(i, n)
     return string
 
 
@@ -85,8 +85,8 @@ def corporatebody(string):
 def remove_specialchar(string):
     string_check(string)
     return re.sub(r"[^a-zA-Z0-9가-힣 ]", " ", string)
-		
-		
+
+
 #### 그냥 숫자로 치환 ( 자릿수에 상관없이 '숫자'로 치환 )
 def numbers_check(string):
     string_check(string)
@@ -108,7 +108,7 @@ def numbers_check(string):
     string_list = ' '.join(string_list)
     
     #for n in ['월','차전','개','회차','원','기','호','점', '차', '박', '건', '회', '일','년','동']:
-    for n in ['월','차전','개','회차','원','기','호', '차', '건', '회', '일','년','동']:
+    for n in ['월', '차전', '개', '회차', '원', '기', '호', '차', '건', '회', '일', '년', '동']:
         string_list = string_list.replace('숫자 %s'%n, '숫자%s '%n)
     return string_list
 
@@ -142,7 +142,7 @@ def space_delete(string):
 
 #### 은행명 뒤에 하이픈 붙은것은 제거
 def remove_bank(string):
-    if string.startswith(('신한-','SC-','국민-','KB-','기업-','농협-','우리-','금고-','경남-','대구-','우체-','하나-','수협-','부산-','신협-')):
+    if string.startswith(('신한-', 'SC-', '국민-', 'KB-', '기업-', '농협-', '우리-', '금고-', '경남-', '대구-', '우체-', '하나-', '수협-', '부산-', '신협-')):
         return string[3:]
     else:
         return string

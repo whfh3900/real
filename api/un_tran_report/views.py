@@ -1,43 +1,70 @@
-from django.shortcuts import render
+# from django.shortcuts import render
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets
+# from django.core.paginator import Paginator
+from django.shortcuts import get_list_or_404
+
+# from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.pagination import PageNumberPagination
+
 from .serializers import UserinfoSerializer, TransactionSerializer
 from .models import UserInfo, Transaction
 from UTD.utd import UniqueTransactionDetect
+
 utd = UniqueTransactionDetect()
 
 # Create your views here.
-class UserInfoViewAPI(APIView):
 
-    # 전체 가져오기(viewsets.ModelViewSet)
-    # def list(self, request):
-    #     queryset = UserInfo.objects.all()
-    #     serializer = UserinfoSerializer(queryset, many=True)
-    #     return Response(serializer.data)
-    #
-    # # 해당 pk만 가져오기
-    # def retrieve(self, request, pk=None):
-    #     queryset = UserInfo.objects.all()
-    #     item = get_object_or_404(queryset, pk=pk)
-    #     serializer = UserinfoSerializer(item)
-    #     return Response(serializer.data)
+class TransactionPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
+class UserInfoViewAPI(APIView):
+    transaction_pagination_class = TransactionPagination
 
     # APIView
     def get(self, request, pk=None):
-        try:
-            queryset = UserInfo.objects.all()
-            item = get_object_or_404(queryset, pk=pk)
-            serializer = UserinfoSerializer(item)
+        # try:
+        #     # UserInfo 테이블의 사용자 테이블만 가져올 떄
+        #     # queryset = UserInfo.objects.all()
+        #     # item = get_object_or_404(queryset, pk=pk)
+        #     # serializer = UserinfoSerializer(item)
+        #
+        #     # UserInfo 테이블의 사용자 테이블 + Transaction 테이블도 가져올 때
+        #     queryset = get_object_or_404(UserInfo.objects.select_related('transaction_set'), pk=pk)
+        #     transactions = queryset.transaction_set.all()
+        #     paginator = Paginator(transactions, 10)
+        #
+        #     page = request.query_params.get('page')
+        #     results = paginator.get_page(page)
+        #     serializer = TransactionSerializer(results, many=True)
+        #
+        #     # 정상 작동
+        #     return Response({"result": serializer.data, "error": None}, status=status.HTTP_200_OK)
+        #
+        # except Exception as e:
+        #     # url이 잘못 됬을때(user_info 에 없는 UID)
+        #     print(e)
+        #
+        #     return Response({"result": None, "error": "No UID matches the given query."}, status=status.HTTP_404_NOT_FOUND)
 
-            # 정상 작동
-            return Response({"data": serializer.data, "state": 200, "error": None}, status=status.HTTP_200_OK)
+        # UserInfo 테이블의 사용자 테이블 + Transaction 테이블도 가져올 때
+        user_info = get_object_or_404(UserInfo.objects.prefetch_related('transaction'), pk=pk)
+        serializer = UserinfoSerializer(user_info)
 
-        except Exception as e:
-            # url이 잘못 됬을때(user_info 에 없는 UID)
-            return Response({"data": None, "state": 404, "error": "No UID matches the given query."}, status=status.HTTP_404_NOT_FOUND)
+        user_info = UserInfo.objects.get(pk=pk)
+        transactions = user_info.transaction.all()
+        print(user_info)
+        print(transactions)
+
+
+        return Response({"result": serializer.data, "error": None}, status=status.HTTP_200_OK)
+
+
+
 
 
     def post(self, request, pk=None):
@@ -50,14 +77,14 @@ class UserInfoViewAPI(APIView):
                 tran_use = UserInfo.objects.filter(uid=pk).values()[0]
             except Exception as e:
                 # serializer 형식 및 url이 잘못 됬을때(user_info 에 없는 UID)
-                return Response({"data": None, "state": 404, "error": "No UID matches the given query."},
+                return Response({"result": None, "error": "No UID matches the given query."},
                                 status=status.HTTP_404_NOT_FOUND)
 
             # 거래유형
             result = utd.predict_result(serializer.data)
             if type(result) is dict:
                 # 데이터 형식이 잘못 됬을때
-                return Response({"result": None, "state": 400, "error": result},
+                return Response({"result": None, "error": result},
                                 status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -98,8 +125,8 @@ class UserInfoViewAPI(APIView):
                                        result=result)
 
             # 정상 작동
-            return Response({"result": detection_result, "state": 201, "error": None}, status=status.HTTP_201_CREATED)
+            return Response({"result": detection_result, "error": None}, status=status.HTTP_201_CREATED)
 
         else:
             # key나 value가 잘못 됬을때(serializer)
-            return Response({"result": None, "state": 400, "error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"result": None, "error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
