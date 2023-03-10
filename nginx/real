@@ -6,7 +6,7 @@ server {
 
 
         location /static/ {
-                root /home/manager/real;
+                root /home/manager/real/;
         }
 
         location / {

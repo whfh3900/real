@@ -64,7 +64,16 @@ class UserInfoViewAPI(APIView):
         return Response({"result": serializer.data, "error": None}, status=status.HTTP_200_OK)
 
 
+<<<<<<< HEAD
 
+=======
+            # 정상 작동
+            return Response({"result": serializer.data, "state": 200, "error": None}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            # url이 잘못 됬을때(user_info 에 없는 UID)
+            return Response({"result": None, "state": 404, "error": "No UID matches the given query."}, status=status.HTTP_404_NOT_FOUND)
+>>>>>>> 2216c462b718b14dc618f9633af832dd0af55d4e
 
 
     def post(self, request, pk=None):
@@ -77,8 +86,13 @@ class UserInfoViewAPI(APIView):
                 tran_use = UserInfo.objects.filter(uid=pk).values()[0]
             except Exception as e:
                 # serializer 형식 및 url이 잘못 됬을때(user_info 에 없는 UID)
+<<<<<<< HEAD
                 return Response({"result": None, "error": "No UID matches the given query."},
                                 status=status.HTTP_404_NOT_FOUND)
+=======
+                return Response({"result": None, "state": 404, "error": "No UID matches the given query."},
+
+>>>>>>> 2216c462b718b14dc618f9633af832dd0af55d4e
 
             # 거래유형
             result = utd.predict_result(serializer.data)
